@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Испанский каждый день</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: friendly, calm pocket tutor — one task at a time
+   IDEA: a pocket ticket/notebook for a daily Spanish lesson
+   PICTURE: today's card at the top, big, with tasks to tick
+   COLOUR and TYPE: Spanish red field + saffron accent on white; Rubik + Inter
+   LAYOUT: one column, phone-first, tab bar at the bottom */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#151214);--ink:light-dark(#1d1416,#f4ecec);--mute:light-dark(#6e5f62,#b7a8aa);
+--red:light-dark(#c60b1e,#8f0a17);--sun:#ffc400;--card:light-dark(#fff,#211b1d);--line:light-dark(#eadfe0,#3a3034);--soft:light-dark(#fbf3f3,#1d1719)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,sans-serif;overflow-x:clip;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:Rubik,system-ui,sans-serif;line-height:1.1;margin:0;text-wrap:balance}
+a{color:var(--red)}:root[data-theme=dark] a{color:#ff8a94}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) a{color:#ff8a94}}
+.top{background:var(--red);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 18px 70px}
+.top h1{font-size:30px}.top p{margin:6px 0 0;opacity:.9;font-size:15px}
+.bar{height:10px;background:rgba(255,255,255,.25);border-radius:9px;margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--sun);border-radius:9px;transition:width .5s}
+.wrap{max-width:640px;margin:-54px auto 0;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(80,0,10,.12);margin-bottom:16px}
+.chip{display:inline-block;font:600 13px Inter,sans-serif;padding:3px 10px;border-radius:99px;background:var(--sun);color:#3a2a00}
+.day{color:var(--mute);font-size:14px;margin-left:8px}
+.card h2{font-size:24px;margin:10px 0 4px}
+.tasks{list-style:none;padding:0;margin:14px 0 4px}
+.tasks li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.tasks input{width:24px;height:24px;flex:none;accent-color:var(--red);margin-top:1px}
+.tasks label{flex:1}
+.btn{display:block;width:100%;min-height:50px;border:0;border-radius:14px;background:var(--red);color:#fff;font:600 17px Inter,sans-serif;margin-top:12px;cursor:pointer}
+.btn:disabled{opacity:.45}
+.btn.ghost{background:transparent;color:var(--mute);min-height:44px;font-size:15px;margin-top:4px}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.note h3{font-size:19px;margin:6px 0 8px}.note ul{padding-left:20px;margin:8px 0}.note p{margin:8px 0}
+.note i{color:var(--red)}:root[data-theme=dark] .note i{color:#ff9aa2}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .note i{color:#ff9aa2}}
+.words{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 12px;margin:8px 0}
+.words b{font-weight:600}.words span{color:var(--mute)}
+details.q{border-top:1px solid var(--line);padding:10px 0}
+details.q summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px;min-height:28px}
+details.q summary::after{content:"ответ";font-size:13px;color:var(--mute);flex:none}
+details.q[open] summary::after{content:"скрыть"}
+details.q div{margin-top:6px;font-weight:600;color:var(--red)}
+.view{display:none}.view.on{display:block}
+.lvl{font:700 15px Rubik,sans-serif;margin:22px 4px 8px;color:var(--mute)}
+details.les{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:8px;padding:0 14px}
+details.les>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;min-height:56px}
+.num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 14px Rubik,sans-serif;background:var(--soft);border:1px solid var(--line)}
+.done .num{background:var(--red);color:#fff;border-color:var(--red)}
+details.les>summary span{flex:1;font-size:15px;line-height:1.3}
+details.les .body{padding:0 0 14px}
+.fc{min-height:220px;border-radius:20px;background:var(--red);color:#fff;display:grid;place-items:center;text-align:center;padding:20px;cursor:pointer;user-select:none;margin-top:12px}
+.fc b{font:700 clamp(28px,8vw,40px) Rubik,sans-serif}.fc small{display:block;margin-top:10px;font-size:20px;color:var(--sun)}
+.row{display:flex;gap:10px}.row .btn{flex:1}
+.btn.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.muted{color:var(--mute);font-size:14px}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:3px;margin-top:10px}
+.seg button{flex:1;min-height:40px;border:0;background:transparent;border-radius:9px;font:600 14px Inter,sans-serif;color:var(--ink)}
+.seg button.on{background:var(--card);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;min-height:60px;border:0;background:none;font:600 14px Inter,sans-serif;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+nav button.on{color:var(--red)}
+nav svg{width:24px;height:24px}
+.fin{text-align:center;padding:30px 10px}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Испанский каждый день</h1>
+  <p id="sub">20–30 минут в день по курсу Lingust</p>
+  <div class="bar"><i id="pbar" style="width:0"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="view on" id="v-today"></section>
+
+  <section class="view" id="v-course">
+    <div class="card"><h2>Весь курс</h2><p class="muted">61 урок, от нуля до B2. Нажми на урок, чтобы открыть заметки и ссылку. Полные объяснения, слова и упражнения пока есть для уроков 0–15 (уровень A1). Дальше будут добавляться по мере того, как ты дойдёшь.</p></div>
+    <div id="list"></div>
+  </section>
+
+  <section class="view" id="v-words">
+    <div class="card">
+      <h2>Карточки</h2>
+      <p class="muted" id="wcount"></p>
+      <div class="seg"><button id="d1" class="on">Испанский → русский</button><button id="d2">Русский → испанский</button></div>
+      <div class="fc" id="fc"></div>
+      <div class="row"><button class="btn alt" id="again">Ещё раз</button><button class="btn" id="know">Знаю</button></div>
+      <button class="btn ghost" id="copy">Скопировать слова для Anki</button>
+      <p class="muted" id="copymsg"></p>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button class="on" data-v="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Сегодня</button>
+  <button data-v="course"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5"/></svg>Курс</button>
+  <button data-v="words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/></svg>Слова</button>
+</nav>
+
+<script>
+{
+const U='https://lingust.ru/español/español-lecciones/';
+const T=[
+['Испанский алфавит. Произношение, буквы и звуки','A1'],['Род существительных и неопределённые артикли','A1'],['Определённый артикль и прилагательное','A1'],['Порядок слов. Вопросы и отрицание','A1'],['Глаголы es и está. Предлоги места','A1'],['Конструкция hay. Место прилагательного','A1'],['Множественное число','A1'],['Когда артикль не нужен','A1'],['Личные местоимения. I спряжение (-ar)','A1'],['Слияние a + el = al. Глагол comenzar','A1'],['Возвратные глаголы. lavarse','A1'],['II спряжение (-er). Падежи через предлоги','A1'],['III спряжение (-ir). mucho и muy','A1'],['Повелительное наклонение (Imperativo)','A1/A2'],['Притяжательные местоимения (mi, tu, su…)','A1'],['ir + a + инфинитив (ближайшее будущее)','A1+'],
+['Прошедшее несовершенное (Imperfecto)','A2'],['Imperfecto неправильных и возвратных глаголов','A2'],['¿qué? ¿quién? с предлогами. tanto / tan','A2'],['Местоимения-дополнения. poder, saber, conocer','A2'],['Безличная форма. Согласование прилагательных','A2'],['Сложное прошедшее (Pretérito perfecto)','A2'],['Perfecto II и III спряжений. todo','A2'],['Местоимения во множественном числе','A2'],['de + инфинитив. el que','A2'],['Простое прошедшее (Indefinido). Артикль lo','A2'],['Indefinido неправильных глаголов. Двойное отрицание','A2'],['Indefinido: decir, ser, saber, querer','A2'],['Два местоимения при глаголе. Уменьшительные формы','A2'],
+['Согласование времён. Gerundio','B1'],['mismo. Глагол ir в Indefinido','B1'],['Pluscuamperfecto. Степени сравнения','B1'],['Превосходная степень. mejor, peor, mayor','B1'],['Pretérito anterior. Наречия','B1+'],['Артикль с de. soler и servir','B1'],['Будущее время (Futuro imperfecto)','B1'],['estar + gerundio. Страдательный залог','B1'],['Притяжательные: el mío, la tuya…','B1'],['Futuro perfecto. al + инфинитив','B1'],['Все времена изъявительного наклонения','B1'],['estar, ser, ir, saber, hacer во всех временах','B1+'],['estar, ser и безличные формы haber','B1'],['el cual, предлог por. sentir, soltar, poner','B1'],
+['Сослагательное наклонение (Subjuntivo)','B1'],['Presente de subjuntivo II и III спряжений','B1'],['Subjuntivo неправильных глаголов','B1'],['Subjuntivo после a que / para que','B1+'],['Subjuntivo: saber, sentir, encontrar','B1+'],['Subjuntivo после cuando, mientras, ojalá','B1+'],['sino, предлог a. Будущее как догадка','B1+'],
+['Условное наклонение (Potencial)','B1+/B2'],['Imperfecto de subjuntivo. Условия с si','B1+/B2'],['Imperfecto de subjuntivo: остальные формы','B1+/B2'],['Perfecto de subjuntivo','B2'],['Potencial compuesto, Pluscuamperfecto de subjuntivo','B2'],['Согласование времён (Concordancia)','B2'],['Сложный инфинитив. Артикли: общие правила','B1/B2'],['5 групп глаголов с изменением корня','B1/B2'],['Порядок слов и место местоимений','B2'],['Предлоги. Числа от 100 до миллиона','B1/B2'],['Переносы и пунктуация','B1/B2']];
+
+const C={
+0:{e:'<p>Испанский читается почти так же, как пишется. Запомни несколько правил:</p><ul><li><b>j</b>, а также <b>g</b> перед e, i — как «х»: <i>jamón</i> [хамóн], <i>gente</i> [хéнте]</li><li><b>c</b> перед e, i и <b>z</b> — в Испании как английское th, в Латинской Америке как «с»: <i>cena, zumo</i></li><li><b>h</b> не читается: <i>hola</i> [óла]</li><li><b>ll</b> и <b>y</b> — примерно «й»: <i>llamar</i> [йамáр]</li><li><b>ñ</b> — «нь»: <i>España</i> [эспáнья]</li><li><b>qu</b> — «к»; <b>gu</b> перед e, i — «г»: <i>queso</i> [кéсо], <i>guerra</i> [гéрра]</li><li><b>v</b> читается почти как «б»: <i>vino</i> [бúно]</li><li><b>rr</b> и r в начале слова — раскатистое «р»</li></ul><p><b>Ударение.</b> Если слово кончается на гласную, n или s, ударение на предпоследний слог: <i>casa, hablan</i>. Иначе на последний: <i>hablar, ciudad</i>. Знак ´ показывает исключение: <i>café, música</i>.</p>',
+w:['hola|привет','adiós|пока','gracias|спасибо','por favor|пожалуйста','sí|да','no|нет','buenos días|доброе утро','perdón|извините'],
+q:['Как читается hola?|óла (h не читается)','Как читается gente?|хéнте','Как читается llave?|йáве','Как читается queso?|кéсо','Где ударение в слове comer?|на последнем слоге: комéр (слово кончается на r)']},
+1:{e:'<p>У каждого существительного есть род: мужской или женский. Среднего рода нет.</p><ul><li>на <b>-o</b> — обычно мужской: <i>libro, chico</i></li><li>на <b>-a</b> — обычно женский: <i>casa, chica</i></li><li>на <b>-ción, -dad</b> — женский: <i>canción, ciudad</i></li></ul><p>Неопределённый артикль («какой-то, один»): <b>un</b> для мужского рода, <b>una</b> для женского: <i>un libro, una casa</i>.</p><p>Исключения надо просто запомнить: <i>el día</i> (м.), <i>la mano</i> (ж.), <i>el problema</i> (м.).</p>',
+w:['libro|книга','casa|дом','mesa|стол','chico|парень','chica|девушка','coche|машина','ciudad|город','hombre|мужчина','mujer|женщина'],
+q:['___ libro|un','___ casa|una','___ ciudad|una (на -dad — женский род)','___ día|un (исключение)','___ canción|una']},
+2:{e:'<p>Определённый артикль («тот самый, известный»): <b>el</b> для мужского рода, <b>la</b> для женского. <i>Un libro</i> — какая-то книга, <i>el libro</i> — та книга, о которой уже шла речь.</p><p>Прилагательное стоит <b>после</b> существительного и меняет окончание по роду: <i>el coche rojo, la casa roja</i>. Если прилагательное кончается на -e или согласную, форма одна для обоих родов: <i>el coche grande, la casa grande; el mar azul, la mesa azul</i>.</p>',
+w:['grande|большой','pequeño|маленький','nuevo|новый','viejo|старый','bonito|красивый','rojo|красный','blanco|белый','azul|синий'],
+q:['la casa (blanco)|la casa blanca','el coche (nuevo)|el coche nuevo','la mesa (grande)|la mesa grande (не меняется)','___ chica bonita (определённый артикль)|la','Переведи: маленький город|una ciudad pequeña']},
+3:{e:'<p>Обычный порядок слов как в русском: кто — что делает — что/кого. <i>Ana es alta.</i> — Ана высокая.</p><p><b>Вопрос</b> пишется со знаком ¿ в начале и ? в конце. Можно просто поменять интонацию или поставить глагол вперёд: <i>¿Ana es alta? / ¿Es alta Ana?</i></p><p><b>Отрицание:</b> <b>no</b> ставится прямо перед глаголом: <i>Ana no es alta.</i></p><p>Вопросительные слова: <i>qué</i> — что, <i>quién</i> — кто, <i>dónde</i> — где, <i>cómo</i> — как. В них всегда пишется знак ударения.</p>',
+w:['qué|что','quién|кто','dónde|где','cómo|как','también|тоже','pero|но','y|и','alto|высокий'],
+q:['Сделай отрицание: Juan es alto.|Juan no es alto.','Сделай вопрос: Ana es alta.|¿Es alta Ana? (или ¿Ana es alta?)','Переведи: Кто это?|¿Quién es?','Переведи: Где книга?|¿Dónde está el libro?']},
+4:{e:'<p>В испанском два глагола «быть». Пока смотрим на форму «он/она»: <b>es</b> и <b>está</b>.</p><ul><li><b>es</b> (ser) — кто/что это, какой по сути, профессия, откуда: <i>Pedro es médico. Madrid es una ciudad.</i></li><li><b>está</b> (estar) — где находится и временное состояние: <i>El libro está en la mesa. Ana está cansada.</i></li></ul><p>Предлоги места: <i>en</i> — в, на; <i>sobre</i> — на (сверху); <i>debajo de</i> — под; <i>delante de</i> — перед; <i>detrás de</i> — за; <i>al lado de</i> — рядом с; <i>entre</i> — между; <i>cerca de</i> — около.</p>',
+w:['médico|врач','cansado|уставший','en|в, на','sobre|на (сверху)','debajo de|под','delante de|перед','detrás de|за, сзади','al lado de|рядом с','cerca de|около'],
+q:['El libro ___ en la mesa.|está (где находится)','Madrid ___ una ciudad.|es (что это)','Ella ___ cansada.|está (состояние)','Pedro ___ médico.|es (профессия)','Переведи: Кот под столом.|El gato está debajo de la mesa.']},
+5:{e:'<p><b>hay</b> — «есть, имеется». Используй, когда говоришь о чём-то новом: <i>Hay un libro en la mesa.</i> — На столе (лежит какая-то) книга.</p><p>Если предмет уже известен — <b>está</b>: <i>El libro está en la mesa.</i> — Книга на столе.</p><p>Подсказка: после hay — un/una или без артикля, перед está — el/la.</p><p>Прилагательное обычно стоит после существительного. Но некоторые меняют смысл, если поставить их вперёд: <i>un hombre grande</i> — крупный человек, <i>un gran hombre</i> — великий человек.</p>',
+w:['silla|стул','habitación|комната','ventana|окно','puerta|дверь','calle|улица','tienda|магазин','árbol|дерево','gato|кот'],
+q:['___ una silla en la habitación.|Hay','La silla ___ en la habitación.|está','___ un árbol delante de la casa.|Hay','Переведи: На улице есть магазин.|En la calle hay una tienda.','un gran hombre или un hombre grande — где «великий»?|un gran hombre']},
+6:{e:'<p>Как образовать множественное число:</p><ul><li>на гласную — добавь <b>-s</b>: <i>libro → libros</i></li><li>на согласную — добавь <b>-es</b>: <i>ciudad → ciudades</i></li><li>на <b>-z</b> — меняй на <b>-ces</b>: <i>lápiz → lápices</i></li></ul><p>Артикли тоже меняются: <i>el → los, la → las, un → unos, una → unas</i>. Прилагательные идут за существительным: <i>las casas blancas</i>.</p>',
+w:['lápiz|карандаш','flor|цветок','amigo|друг','niño|ребёнок','mar|море','país|страна','hoja|лист','vez|раз'],
+q:['libro →|libros','ciudad →|ciudades','lápiz →|lápices','la mesa blanca →|las mesas blancas','un amigo nuevo →|unos amigos nuevos']},
+7:{e:'<p>Иногда артикль не ставится:</p><ul><li>профессия или национальность после <i>ser</i>: <i>Soy estudiante. Es profesor.</i> Но если есть прилагательное, артикль возвращается: <i>Es un buen profesor.</i></li><li>название языка после <i>hablar</i>: <i>Hablo ruso.</i></li><li>неопределённое количество чего-то: <i>Bebo agua. Compro pan.</i></li><li>при обращении к человеку: <i>Buenos días, señor García.</i> Но когда говоришь о нём — <i>el señor García</i>.</li></ul>',
+w:['estudiante|студент','profesor|учитель','agua|вода','pan|хлеб','ruso|русский','señor|господин','idioma|язык','café|кофе'],
+q:['Juan es ___ profesor.|ничего: Juan es profesor.','Juan es ___ buen profesor.|un','Hablo ___ español.|ничего: Hablo español.','Переведи: Я студент.|Soy estudiante.','___ señor García está en casa.|El']},
+8:{e:'<p>Личные местоимения: <i>yo</i> — я, <i>tú</i> — ты, <i>él / ella / usted</i> — он / она / Вы, <i>nosotros / nosotras</i> — мы, <i>vosotros / vosotras</i> — вы (так говорят в Испании), <i>ellos / ellas / ustedes</i> — они / Вы (много людей).</p><p>Глаголы на <b>-ar</b> — первое спряжение. Убираем -ar и добавляем окончания:</p><p><b>hablar:</b> habl<b>o</b>, habl<b>as</b>, habl<b>a</b>, habl<b>amos</b>, habl<b>áis</b>, habl<b>an</b></p><p>Местоимения часто опускают, по окончанию и так понятно: <i>Hablo español.</i> — Я говорю по-испански.</p>',
+w:['hablar|говорить','trabajar|работать','estudiar|учиться','escuchar|слушать','mirar|смотреть','comprar|покупать','llegar|прибывать','tomar|брать; пить'],
+q:['nosotros (trabajar)|trabajamos','tú (estudiar)|estudias','ellos (comprar)|compran','yo (escuchar)|escucho','Переведи: Мы говорим по-русски.|Hablamos ruso.']},
+9:{e:'<p>Предлоги сливаются с артиклем el:</p><ul><li><b>a + el = al</b>: <i>Llego al parque.</i></li><li><b>de + el = del</b>: <i>la casa del chico</i></li></ul><p>С la не сливаются: <i>a la casa, de la chica</i>.</p><p>У некоторых глаголов под ударением <b>e → ie</b>. <b>comenzar</b> (начинать): com<b>ie</b>nzo, com<b>ie</b>nzas, com<b>ie</b>nza, comenzamos, comenzáis, com<b>ie</b>nzan. В формах «мы» и «вы» замены нет, потому что там ударение на окончании.</p>',
+w:['comenzar|начинать','empezar|начинать','cerrar|закрывать','pensar|думать','querer|хотеть','parque|парк','clase|занятие, урок','hora|час'],
+q:['Llego ___ parque.|al','la casa ___ chico|del','la puerta ___ casa|de la (не сливается)','La clase (comenzar) a las nueve.|comienza','nosotros (pensar)|pensamos (без замены)','yo (querer)|quiero']},
+10:{e:'<p>Возвратные глаголы — это русские глаголы на <b>-ся</b>: мыться, называться. В испанском частичка <b>se</b> отделяется и встаёт перед глаголом в нужной форме:</p><p><b>lavarse</b> (мыться): <b>me</b> lavo, <b>te</b> lavas, <b>se</b> lava, <b>nos</b> lavamos, <b>os</b> laváis, <b>se</b> lavan</p><p>Самая нужная фраза: <i>¿Cómo te llamas? — Me llamo Taras.</i> (Как тебя зовут? — Меня зовут Тарас.)</p>',
+w:['lavarse|мыться','llamarse|называться','levantarse|вставать','ducharse|принимать душ','quedarse|оставаться','mañana|утро; завтра','temprano|рано','tarde|поздно; вечер'],
+q:['Yo ___ levanto temprano.|me','Ellos ___ lavan.|se','¿Cómo ___ llamas?|te','Nosotros ___ duchamos.|nos','Переведи: Меня зовут Тарас.|Me llamo Taras.']},
+11:{e:'<p>Глаголы на <b>-er</b> — второе спряжение:</p><p><b>comer</b> (есть): com<b>o</b>, com<b>es</b>, com<b>e</b>, com<b>emos</b>, com<b>éis</b>, com<b>en</b></p><p>Падежей, как в русском, нет. Их заменяют предлоги:</p><ul><li><b>de</b> — «чей, чего»: <i>el libro de Ana</i> — книга Аны</li><li><b>a</b> — «кому»: <i>Escribo a Pedro</i>; и «кого», если это человек: <i>Veo a María</i></li></ul>',
+w:['comer|есть, кушать','beber|пить','leer|читать','aprender|учить, изучать','comprender|понимать','vender|продавать','correr|бегать','ver|видеть'],
+q:['yo (leer)|leo','vosotros (beber)|bebéis','ella (aprender)|aprende','Veo ___ Pedro.|a (это человек)','Veo ___ casa.|la (не человек, a не нужно)']},
+12:{e:'<p>Глаголы на <b>-ir</b> — третье спряжение. Почти как -er, отличаются только «мы» и «вы»:</p><p><b>vivir</b> (жить): viv<b>o</b>, viv<b>es</b>, viv<b>e</b>, viv<b>imos</b>, viv<b>ís</b>, viv<b>en</b></p><p><b>muy</b> или <b>mucho</b>?</p><ul><li><b>muy</b> — «очень» перед прилагательным или наречием: <i>muy bueno, muy bien</i></li><li><b>mucho</b> — «много, очень» с существительным и глаголом: <i>mucho trabajo, trabajo mucho</i>. Рядом с существительным меняется: <i>mucha agua, muchos libros, muchas casas</i></li></ul>',
+w:['vivir|жить','escribir|писать','abrir|открывать','recibir|получать','subir|подниматься','decidir|решать','bueno|хороший','bien|хорошо'],
+q:['Nosotros (vivir) en Israel.|vivimos','Ella es ___ inteligente.|muy','Él trabaja ___.|mucho','Hay ___ gente.|mucha (gente — женский род)','Leo ___ libros.|muchos']},
+13:{e:'<p>Повелительное наклонение — это просьбы и приказы.</p><p>Для <b>tú</b> (ты) бери форму «он» настоящего времени: <i>habla</i> — говори, <i>come</i> — ешь, <i>escribe</i> — пиши.</p><p>Для <b>usted</b> (Вы) гласная окончания «меняется местами»: -ar → <b>-e</b>, -er/-ir → <b>-a</b>: <i>hable, coma, escriba</i>.</p><p>Неправильные формы для tú лучше выучить сразу: <i>di</i> (скажи), <i>haz</i> (сделай), <i>ve</i> (иди), <i>pon</i> (положи), <i>sal</i> (выйди), <i>ten</i> (возьми), <i>ven</i> (иди сюда), <i>sé</i> (будь).</p>',
+w:['venir|приходить','hacer|делать','decir|сказать','poner|класть','salir|выходить','tener|иметь','ir|идти, ехать','esperar|ждать'],
+q:['hablar (tú)|habla','escribir (tú)|escribe','venir (tú)|ven','comer (usted)|coma','Переведи (usted): Говорите медленнее, пожалуйста.|Hable más despacio, por favor.']},
+14:{e:'<p>Притяжательные слова стоят перед существительным:</p><ul><li><b>mi / mis</b> — мой, моя / мои</li><li><b>tu / tus</b> — твой / твои</li><li><b>su / sus</b> — его, её, Ваш, их</li><li><b>nuestro, nuestra, nuestros, nuestras</b> — наш</li><li><b>vuestro, vuestra, vuestros, vuestras</b> — ваш</li></ul><p>Они меняются по числу того, чем владеют, а не того, кто владеет: <i>mis libros</i> — мои книги. Nuestro и vuestro меняются ещё и по роду: <i>nuestra casa</i>.</p>',
+w:['madre|мать','padre|отец','hermano|брат','hermana|сестра','familia|семья','hijo|сын','amiga|подруга','perro|собака'],
+q:['___ casa (моя)|mi','___ libros (твои)|tus','___ madre (наша)|nuestra','___ coche (их)|su','Переведи: Мои братья живут в Израиле.|Mis hermanos viven en Israel.']},
+15:{e:'<p>Самый простой способ говорить о будущем: <b>ir a + инфинитив</b> — «собираюсь сделать».</p><p><b>ir</b> (идти): voy, vas, va, vamos, vais, van</p><p><i>Voy a estudiar.</i> — Я буду учиться. <i>Vamos a comer.</i> — Мы будем есть / Давай поедим.</p>',
+w:['hoy|сегодня','ahora|сейчас','luego|потом','semana|неделя','mes|месяц','año|год','viajar|путешествовать','fin de semana|выходные'],
+q:['Yo ___ a comer.|voy','Nosotros ___ a viajar.|vamos','Ellos ___ a estudiar.|van','Переведи: Завтра я буду учить испанский.|Mañana voy a estudiar español.','Переведи: Что ты будешь делать?|¿Qué vas a hacer?']}
+};
+const TIP=['','','','','','','','','','','','','','','','',
+'Прошлое «что делал, как обычно было»: hablaba, comía, vivía.','Неправильных всего три: ser → era, ir → iba, ver → veía.','Предлог ставится перед вопросом: ¿Con quién? ¿De qué? tanto / tan — «столько / так».','lo, la, le — «его, её, ему». poder — мочь, saber — знать/уметь, conocer — быть знакомым.','se + глагол = «тут говорят, делают»: Se habla español.','he hablado — «я (уже) поговорил»: прошлое, связанное с сегодня.','Причастия на -ido: comido, vivido. todo / toda / todos — весь, все.','nos, os, los, las, les — «нас, вас, их, им».','el que / la que — «тот, который».','Законченное действие в прошлом: hablé, comí. lo + прилагательное: lo bueno — «хорошее, то, что хорошо».','tuve, estuve, hice. Двойное отрицание — это нормально: No veo nada.','dije, fui, supe, quise — выучи как слова.','me lo da — «даёт мне это». le + lo → se lo. -ito/-ita: casita — домик.',
+'Gerundio на -ando / -iendo: hablando, comiendo.','mismo — тот же самый, сам. ir и ser в Indefinido совпадают: fui, fuiste…','había hablado — «уже сделал до того». más / menos … que — больше / меньше, чем.','-ísimo: buenísimo. mejor, peor, mayor, menor.','hube hablado — книжное время, достаточно узнавать в тексте.','soler + инфинитив — «обычно делать»: Suelo leer.','Будущее: к инфинитиву добавь окончание: hablaré, comeré.','Estoy leyendo — «я сейчас читаю». Пассив: ser + причастие.','el mío, la tuya — «мой, твой» без существительного.','habré hecho — «к тому времени сделаю». al llegar — «когда приду».','Обзорный урок: сделай себе таблицу всех времён.','Таблица главных неправильных глаголов во всех временах — сохрани её.','Ещё раз ser и estar, глубже. hay, había, habrá.','el cual — «который» (книжное). por — через, из-за, за.',
+'Subjuntivo — для желаний, сомнений, чувств: Quiero que hables.','-er / -ir в Subjuntivo получают -a: coma, viva.','tenga, haga, sea, vaya. Es importante que…','para que + Subjuntivo — «чтобы».','sepa, sienta, encuentre — изменения корня.','Cuando llegues (в будущем) — Subjuntivo. ojalá — «хорошо бы».','sino — «а» после отрицания: No es rojo sino azul. Serán las tres — «наверное, три часа».',
+'hablaría — «говорил бы».','Si tuviera dinero, viajaría. — Если бы у меня были деньги, я бы путешествовал.','fuera, hiciera, tuviera — формы от неправильных.','haya hablado — «что (уже) сделал».','habría hecho, hubiera hecho — «сделал бы тогда».','Полная схема согласования времён — главная таблица уровня B2.','haber + причастие как инфинитив. Общие правила артиклей.','Группы глаголов: e → ie, o → ue, e → i и другие.','Где ставить местоимения-дополнения.','Числа от 100 до миллиона и предлоги.','Как переносить слова и ставить знаки.'];
+
+const DAYS=[];
+for(let n=0;n<=60;n++){
+  DAYS.push({id:n+'a',n,k:'read'},{id:n+'b',n,k:'learn'},{id:n+'c',n,k:'practice'});
+  if(n%5===4||n===60)DAYS.push({id:'r'+n,n,k:'review',from:Math.max(0,n-4)});
+}
+
+let done=new Set();
+try{done=new Set(JSON.parse(localStorage.getItem('esp-done')||'[]'))}catch(e){}
+const save=()=>{try{localStorage.setItem('esp-done',JSON.stringify([...done]))}catch(e){}};
+const link=n=>U+(n===0?'pronunciación':'lección'+n);
+
+function note(n){
+  const c=C[n];
+  if(!c)return `<div class="note"><h3>Коротко о теме</h3><p>${TIP[n]}</p><p class="muted">Подробное объяснение, слова и упражнения к этому уроку я добавлю, когда дойдёшь сюда. Пока выписывай новые слова из урока сам.</p></div>`;
+  return `<div class="note"><h3>Объяснение</h3>${c.e}<h3>Слова урока</h3><div class="words">${c.w.map(x=>{const[a,b]=x.split('|');return`<b>${a}</b><span>${b}</span>`}).join('')}</div><h3>Упражнения</h3>${c.q.map(x=>{const[a,b]=x.split('|');return`<details class="q"><summary>${a}</summary><div>${b}</div></details>`}).join('')}</div>`;
+}
+
+function tasks(d){
+  const L=`<a href="${link(d.n)}" target="_blank" rel="noopener">урок ${d.n} на Lingust</a>`;
+  const has=!!C[d.n];
+  if(d.k==='read')return['Открой '+L+' и прочитай теорию (~15 мин)','Перепиши в тетрадь 5 примеров из урока','5–10 мин послушай Dreaming Spanish (уровень Superbeginner или Beginner на YouTube)'];
+  if(d.k==='learn')return has?['Прочитай моё объяснение ниже (~5 мин)','Выучи слова урока во вкладке «Слова» (~10 мин)','Сделай упражнения ниже, потом открой ответ']:['Перечитай '+L,'Выпиши 8–10 новых слов из урока в Anki или в тетрадь','Прочитай подсказку ниже и сделай первые упражнения урока на сайте'];
+  if(d.k==='practice')return['Повтори карточки во вкладке «Слова» (~10 мин)','Сделай упражнения в конце урока на Lingust: '+L,'Напиши 5 своих предложений по теме и прочитай их вслух'];
+  return['Повтори все карточки во вкладке «Слова»','Пробеги заметки уроков '+d.from+'–'+d.n+' во вкладке «Курс»','Расскажи вслух о себе на испанском 1–2 минуты, или 20 минут Dreaming Spanish'];
+}
+const KIND={read:'Читаем урок',learn:'Разбираем и учим слова',practice:'Практика',review:'День повторения'};
+
+function renderToday(){
+  const i=DAYS.findIndex(d=>!done.has(d.id));
+  const pct=Math.round(done.size/DAYS.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('sub').textContent=`Пройдено ${done.size} из ${DAYS.length} дней · ${pct}%`;
+  const v=document.getElementById('v-today');
+  if(i<0){v.innerHTML=`<div class="card fin"><h2>¡Enhorabuena!</h2><p>Курс пройден. Ты дошёл до уровня B2.</p></div>`;return}
+  const d=DAYS[i],t=tasks(d);
+  v.innerHTML=`<div class="card"><span class="chip">${T[d.n][1]}</span><span class="day">День ${i+1} · ${KIND[d.k]}</span>
+  <h2>${d.k==='review'?'Повторяем уроки '+d.from+'–'+d.n:'Урок '+d.n+'. '+T[d.n][0]}</h2>
+  <ul class="tasks">${t.map((x,j)=>`<li><input type="checkbox" id="t${j}"><label for="t${j}">${x}</label></li>`).join('')}</ul>
+  <button class="btn" id="next" disabled>Готово, на сегодня всё</button>
+  ${i>0?'<button class="btn ghost" id="back">Вернуться на день назад</button>':''}</div>
+  ${d.k==='learn'||d.k==='practice'?`<div class="card">${note(d.n)}</div>`:''}`;
+  const boxes=[...v.querySelectorAll('.tasks input')],nx=document.getElementById('next');
+  boxes.forEach(b=>b.addEventListener('change',()=>{nx.disabled=!boxes.every(x=>x.checked)}));
+  nx.addEventListener('click',()=>{done.add(d.id);save();renderAll();window.scrollTo(0,0)});
+  const bk=document.getElementById('back');
+  if(bk)bk.addEventListener('click',()=>{done.delete(DAYS[i-1].id);save();renderAll()});
+}
+
+function renderCourse(){
+  let html='',lv='';
+  T.forEach(([t,l],n)=>{
+    const g=l[0]==='A'?(l.startsWith('A1')?'A1 — начальный':'A2 — базовый'):(l.startsWith('B2')||l.includes('/B2')?'B2 — средне-продвинутый':'B1 — средний');
+    if(g!==lv){html+=`<div class="lvl">${g}</div>`;lv=g}
+    const ok=done.has(n+'c');
+    html+=`<details class="les${ok?' done':''}"><summary><span class="num">${ok?'✓':n}</span><span>${t}</span></summary><div class="body"><p><a href="${link(n)}" target="_blank" rel="noopener">Открыть урок ${n} на Lingust</a></p>${note(n)}</div></details>`;
+  });
+  document.getElementById('list').innerHTML=html;
+}
+
+let deck=[],cur=null,flip=false,dir=0;
+function pool(){
+  const ns=Object.keys(C).map(Number).filter(n=>done.has(n+'b'));
+  const use=ns.length?ns:[0,1];
+  return use.flatMap(n=>C[n].w.map(x=>x.split('|')));
+}
+function nextCard(){
+  if(!deck.length)deck=pool().sort(()=>Math.random()-.5);
+  cur=deck.shift();flip=false;showCard();
+}
+function showCard(){
+  const fc=document.getElementById('fc');
+  const [a,b]=dir?[cur[1],cur[0]]:cur;
+  fc.innerHTML=`<div><b>${a}</b>${flip?`<small>${b}</small>`:'<small style="opacity:.7;font-size:15px;color:#fff">нажми, чтобы увидеть перевод</small>'}</div>`;
+}
+function renderWords(){
+  const p=pool(),ns=Object.keys(C).filter(n=>done.has(n+'b'));
+  document.getElementById('wcount').textContent=ns.length?`В колоде ${p.length} слов из пройденных уроков.`:`Пока в колоде слова уроков 0–1. Новые добавятся, когда отметишь второй день урока.`;
+  deck=[];nextCard();
+}
+document.getElementById('fc').addEventListener('click',()=>{flip=!flip;showCard()});
+document.getElementById('know').addEventListener('click',nextCard);
+document.getElementById('again').addEventListener('click',()=>{deck.splice(Math.min(3,deck.length),0,cur);nextCard()});
+const seg=[document.getElementById('d1'),document.getElementById('d2')];
+seg.forEach((b,k)=>b.addEventListener('click',()=>{dir=k;seg.forEach((x,j)=>x.classList.toggle('on',j===k));flip=false;showCard()}));
+document.getElementById('copy').addEventListener('click',()=>{
+  const txt=pool().map(([a,b])=>a+'\t'+b).join('\n'),m=document.getElementById('copymsg');
+  navigator.clipboard.writeText(txt).then(()=>{m.textContent='Скопировано. В Anki на компьютере: «Файл → Импорт» и вставь как текст с табуляцией.'},()=>{m.textContent='Не получилось скопировать на этом устройстве.'});
+});
+
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+b.dataset.v));
+  window.scrollTo(0,0);
+}));
+
+function renderAll(){renderToday();renderCourse();renderWords()}
+renderAll();
+}
+</script>
+</body>
+</html>
